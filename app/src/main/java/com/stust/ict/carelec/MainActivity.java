@@ -26,8 +26,8 @@ import app.akexorcist.bluetotohspp.library.DeviceList;
 public class MainActivity extends AppCompatActivity {
     BluetoothSPP bt;
     AwesomeSpeedometer Speed;
-    TextView speedLabel ,speedLabe2 ,speedLabe3, speedLabe4;
-    Button Send;
+    TextView speedLabel ,speedLabe2 ,speedLabe3, speedLabe4, speedLabe5,speedLabe6,speedLabe7;
+    Button Send,BT1;
     Button btnConnect;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,14 +66,24 @@ public class MainActivity extends AppCompatActivity {
         speedLabe2 = (TextView)findViewById(R.id.speedLabe2);
         speedLabe3 = (TextView)findViewById(R.id.speedLabe3);
         speedLabe4 = (TextView)findViewById(R.id.speedLabe4);
+        speedLabe5 = (TextView)findViewById(R.id.speedLabe5);
+        speedLabe6 = (TextView)findViewById(R.id.speedLabe6);
+        speedLabe7 = (TextView)findViewById(R.id.speedLabe7);
         Speed=(AwesomeSpeedometer) findViewById(R.id.Speed);
         Speed.setMaxSpeed(250);
         Speed.setTrianglesColor(Color.YELLOW);
         Send = (Button)findViewById(R.id.Send);
+        BT1 = (Button)findViewById(R.id.BT1);
         Send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setup();
+            }
+        });
+        BT1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                up();
             }
         });
         btnConnect = (Button)findViewById(R.id.btnConnect);
@@ -87,6 +97,27 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void up() {
+        bt.send("@data",true);
+        bt.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener(){
+            public  void  onDataReceived(byte [] data,String  message){
+                Log.v("tag",message);
+                String Result[] = message.split(",");
+                if(Result[0].toString().equals("$210")){
+                    Speed.speedTo(Integer.parseInt(Result[1].toString()));
+                    speedLabel.setText(Result[1].toString());
+                    speedLabe2.setText(Result[2].toString());
+                    speedLabe3.setText(Result[3].toString());
+                    speedLabe4.setText(Result[4].toString());
+                    speedLabe5.setText(Result[5].toString());
+                    speedLabe6.setText(Result[6].toString());
+                    speedLabe7.setText(Result[7].toString());
+                }
+            }
+        });
+
     }
 
     public void onDestroy() {
@@ -109,21 +140,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setup() {
-        bt.send("@OBD", true);
-        bt.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
-            public void onDataReceived(byte[] data, String message) {
-                Log.v("tag",message);
-                String Result[] = message.split(",");
-                if(Result[0].toString().equals("$210")){
-                    Speed.speedTo(Integer.parseInt(Result[2].toString()));
-                    speedLabel.setText(Result[2].toString());
-                    speedLabe2.setText(Result[3].toString());
-                    speedLabe3.setText(Result[1].toString());
-                    speedLabe4.setText(Result[4].toString());
-                }
-
-            }
-        });
+        bt.send("$210,144,50,135,50,105,65535,4998,",true);
 
     }
 
