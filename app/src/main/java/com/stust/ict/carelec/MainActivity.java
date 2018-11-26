@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.anastr.speedviewlib.AwesomeSpeedometer;
+import com.github.anastr.speedviewlib.ProgressiveGauge;
 import com.github.anastr.speedviewlib.SpeedView;
 
 import app.akexorcist.bluetotohspp.library.BluetoothSPP;
@@ -26,6 +27,7 @@ import app.akexorcist.bluetotohspp.library.DeviceList;
 public class MainActivity extends AppCompatActivity {
     BluetoothSPP bt;
     AwesomeSpeedometer Speed;
+    ProgressiveGauge gauge;
     TextView speedLabel ,speedLabe2 ,speedLabe3, speedLabe4, speedLabe5,speedLabe6,speedLabe7;
     Button Send,BT1;
     Button btnConnect;
@@ -100,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void up() {
-        bt.send("@data",true);
         bt.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener(){
             public  void  onDataReceived(byte [] data,String  message){
                 Log.v("tag",message);
@@ -108,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 if(Result[0].toString().equals("$210")){
                     Speed.speedTo(Integer.parseInt(Result[1].toString()));
                     speedLabel.setText(Result[1].toString());
-                    speedLabe2.setText(Result[2].toString());
+                    speedLabe2.setText("MAF:"+(Result[2].toString()));
                     speedLabe3.setText(Result[3].toString());
                     speedLabe4.setText(Result[4].toString());
                     speedLabe5.setText(Result[5].toString());
@@ -140,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setup() {
-        bt.send("$210,144,50,135,50,105,65535,4998,",true);
+        bt.send("$210,144,50,135,50,105,65535,4998,90,122,55,66,33,77",true);
 
     }
 
